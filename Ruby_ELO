@@ -13,17 +13,17 @@ playerscores = {
 def rankcalc(score)
   rankboundary = 249
   rank = 0
-  while winnerscore > upperboundary
-    upperboundary += 250
+  while score > rankboundary
+    rankboundary += 250
     rank += 1
   end
+  return rank
 end
-def
 
-end
+
 
 #frontend
-print "test"
+
 while loop != true
 
   puts "What would you like to do?"
@@ -39,21 +39,28 @@ while loop != true
       playerscores.each { |player,score| 
         puts "#{player}: #{score}"
       }
+
     when "battle"
       puts "Who won the battle?"
       winner = gets.chomp.capitalize
 
       if playerscores[winner.to_sym].nil?
         puts "Player not found!"
+        next
       else
         winnerrank = rankcalc(playerscores[winner.to_sym])
-        puts winnerrank
       end
 
       puts "Who lost the battle?"
       loser = gets.chomp.capitalize
+      if playerscores[loser.to_sym].nil?
+        puts "Player not found!"
+        next
+      else
+        loserrank = rankcalc(playerscores[loser.to_sym])
+      end
 
-      
+
     when "add"
       puts "What is the player's name?"
       playername = gets.chomp.capitalize
@@ -110,6 +117,5 @@ while loop != true
   
 
   
-  end
-puts "---------------"  
+  puts "-----------------"
 end
