@@ -1,0 +1,115 @@
+loop = false #for inf loop
+
+#storage
+playerscores = {
+  James: 368,
+  Matthew: 730,
+  Rachel: 102,
+  Alix: 427
+}
+
+#methods
+
+def rankcalc(score)
+  rankboundary = 249
+  rank = 0
+  while winnerscore > upperboundary
+    upperboundary += 250
+    rank += 1
+  end
+end
+def
+
+end
+
+#frontend
+print "test"
+while loop != true
+
+  puts "What would you like to do?"
+  puts "-- 'display' - "
+  puts "-- 'battle' - "
+  puts "-- 'add' - "
+  puts "-- 'delete' - "
+  puts "-- 'update' - "
+  choice = gets.chomp.downcase
+
+  case choice
+    when "display"
+      playerscores.each { |player,score| 
+        puts "#{player}: #{score}"
+      }
+    when "battle"
+      puts "Who won the battle?"
+      winner = gets.chomp.capitalize
+
+      if playerscores[winner.to_sym].nil?
+        puts "Player not found!"
+      else
+        winnerrank = rankcalc(playerscores[winner.to_sym])
+        puts winnerrank
+      end
+
+      puts "Who lost the battle?"
+      loser = gets.chomp.capitalize
+
+      
+    when "add"
+      puts "What is the player's name?"
+      playername = gets.chomp.capitalize
+        if playerscores[playername.to_sym].nil?
+          puts "What is their score?"
+          score = gets.chomp
+          playerscores[playername.to_sym] = score.to_i
+          puts "#{playername} has been added with a score of #{score}."
+        else
+          puts "#{playername} already exists! Their score is #{playerscores[playername.to_sym]}."
+        end
+    when "delete"
+      puts "Which player would you like to delete?"
+      playername = gets.chomp.capitalize
+      if playerscores[playername.to_sym].nil?
+        puts "Player not found!"
+      else
+        playerscores.delete(playername.to_sym)
+        puts "#{playername} has been removed."
+      end
+      
+    when "update"
+      puts "Would you like to update a player name or a score?"
+      puts "-- 'player'"
+      puts "-- 'score'"
+      updatechoice = gets.chomp.downcase
+      case updatechoice
+        when "player"
+          puts "Which player would you like to update?"
+          oldname = gets.chomp.capitalize
+          puts "What is their new name?"
+          newname = gets.chomp.capitalize
+
+          playerscores[newname.to_sym] = playerscores[oldname.to_sym]
+          playerscores.delete(oldname.to_sym)
+
+          puts "player #{oldname} has been updated to #{newname}, retaining score #{playerscores[newname.to_sym]}"
+
+        when "score"
+          puts "Which player would you like to update?"
+          playername = gets.chomp.capitalize
+          puts "What is the new score?"
+          newscore = gets.chomp.capitalize
+          playerscores[playername.to_sym] = newscore.to_i
+
+          puts "#{playername}'s score has been updated to #{playerscores[playername.to_sym]}"
+
+        else
+          puts "Invalid response!"
+        end
+    else
+      puts "Invalid response!"
+    end
+  
+
+  
+  end
+puts "---------------"  
+end
