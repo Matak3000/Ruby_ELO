@@ -1,6 +1,8 @@
 loop = false #for inf loop
 
-#storage
+#the most important change to be made, functionally, is the addition of 'trycatch' functions to prevent strings being entered where integers are expected.
+
+#----------STORAGE----------
 playerscores = {
   James: 255,
   Matthew: 745,
@@ -9,9 +11,9 @@ playerscores = {
   Tim: 1
 }
 
-#methods
+#----------METHODS----------
 
-def rankcalc(score)
+def rankcalc(score) #calculates the rank of a player in 250 point boundaries (i.e 250 points = rank 1, 500 = rank 2)
   rankboundary = 249
   rank = 0
   while score > rankboundary
@@ -20,7 +22,7 @@ def rankcalc(score)
   end
   return rank
 end
-def pointschange(winner,loser)
+def pointschange(winner,loser) #calculates how many points should be gained or lost, with clauses to cap the max and min changes at 25 and 5, respectively.
   x = 15 + (loser - winner) * 2
   if x > 25
     x = 25
@@ -31,29 +33,30 @@ def pointschange(winner,loser)
   end
   return x
 end
+#potentially add a method for 'name.nil?' - used a lot
 
-#frontend
+#----------FRONTEND----------
 
 while loop != true
 
   puts "What would you like to do?"
-  puts "-- 'display' - "
-  puts "-- 'battle' - "
-  puts "-- 'add' - "
-  puts "-- 'delete' - "
-  puts "-- 'update' - "
+  puts "-- 'display' - Display all recorded players, scores and ranks"
+  puts "-- 'battle' - Record a battle between players, and update their scores"
+  puts "-- 'add' - Add a player"
+  puts "-- 'delete' - Delete a player"
+  puts "-- 'update' - Update a player's name or score"
   choice = gets.chomp.downcase
 
   case choice
     when "display"
       playerscores.each { |player,score| 
-        puts "#{player}: #{score}"
+        puts "#{player}: #{score}, rank #{rankcalc(score)}"
       }
 
     when "battle"
+      #setting variables
       puts "Who won the battle?"
       winner = gets.chomp.capitalize
-
       if playerscores[winner.to_sym].nil?
         puts "Player not found!"
         next
@@ -70,23 +73,22 @@ while loop != true
         loserrank = rankcalc(playerscores[loser.to_sym])
       end
 
+      #battle calculations
       puts "-----------------"
       change = pointschange(winnerrank,loserrank)
       puts "#{winner}'s rank is #{winnerrank}, and #{loser}'s rank is #{loserrank}, therefore:"
-
+      #updating scores
       playerscores[winner.to_sym] += change
       playerscores[loser.to_sym] -= change
-
       puts "#{winner} gained #{change} points, and #{loser} lost #{change} points."
 
-      if playerscores[loser.to_sym] < 0
+      if playerscores[loser.to_sym] < 0 #negative score check
         playerscores[loser.to_sym] = 0
         puts "#{loser}'s points became negative, so were reset to 0."
       end
-
+      #checking for changes to ranks
       newwinnerrank = rankcalc(playerscores[winner.to_sym])
       newloserrank = rankcalc(playerscores[loser.to_sym])
-
       if newwinnerrank > winnerrank
         puts "#{winner}'s rank increased to #{newwinnerrank}."
       end
@@ -124,13 +126,17 @@ while loop != true
         when "player"
           puts "Which player would you like to update?"
           oldname = gets.chomp.capitalize
-          puts "What is their new name?"
-          newname = gets.chomp.capitalize
+          if playerscores[oldname.to_sym].nil?
+            puts "Player not found!"
+          else
+            puts "What is their new name?"
+            newname = gets.chomp.capitalize
+            #I couldn't seem to find a direct way to update a key in a hash, so I have opted for creating a new one using the value of the old, then deleting the old key, this will be updated if a way to update the key is possible
+            playerscores[newname.to_sym] = playerscores[oldname.to_sym]
+            playerscores.delete(oldname.to_sym)
 
-          playerscores[newname.to_sym] = playerscores[oldname.to_sym]
-          playerscores.delete(oldname.to_sym)
-
-          puts "player #{oldname} has been updated to #{newname}, retaining score #{playerscores[newname.to_sym]}"
+            puts "player #{oldname} has been updated to #{newname}, retaining score #{playerscores[newname.to_sym]}" # 'retaining a score of x' acts as verification the update to the new key was successful
+          end
 
         when "score"
           puts "Which player would you like to update?"
@@ -149,8 +155,5 @@ while loop != true
     else
       puts "Invalid response!"
     end
-  
-
-  
   puts "-----------------"
 end
