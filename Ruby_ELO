@@ -2,10 +2,11 @@ loop = false #for inf loop
 
 #storage
 playerscores = {
-  James: 368,
-  Matthew: 730,
+  James: 255,
+  Matthew: 745,
   Rachel: 102,
-  Alix: 427
+  Alix: 427,
+  Tim: 1
 }
 
 #methods
@@ -19,8 +20,17 @@ def rankcalc(score)
   end
   return rank
 end
-
-
+def pointschange(winner,loser)
+  x = 15 + (loser - winner) * 2
+  if x > 25
+    x = 25
+    puts "Overscore Clause - points change capped at 25"
+  elsif x < 5
+    x = 5
+    puts "Underscore clause - points change capped at 5"
+  end
+  return x
+end
 
 #frontend
 
@@ -60,6 +70,29 @@ while loop != true
         loserrank = rankcalc(playerscores[loser.to_sym])
       end
 
+      puts "-----------------"
+      change = pointschange(winnerrank,loserrank)
+      puts "#{winner}'s rank is #{winnerrank}, and #{loser}'s rank is #{loserrank}, therefore:"
+
+      playerscores[winner.to_sym] += change
+      playerscores[loser.to_sym] -= change
+
+      puts "#{winner} gained #{change} points, and #{loser} lost #{change} points."
+
+      if playerscores[loser.to_sym] < 0
+        playerscores[loser.to_sym] = 0
+        puts "#{loser}'s points became negative, so were reset to 0."
+      end
+
+      newwinnerrank = rankcalc(playerscores[winner.to_sym])
+      newloserrank = rankcalc(playerscores[loser.to_sym])
+
+      if newwinnerrank > winnerrank
+        puts "#{winner}'s rank increased to #{newwinnerrank}."
+      end
+      if newloserrank < loserrank
+        puts "#{loser}'s rank decreased to #{newloserrank}."
+      end
 
     when "add"
       puts "What is the player's name?"
@@ -111,6 +144,8 @@ while loop != true
         else
           puts "Invalid response!"
         end
+    when "kill" #to break loop during testing
+      break
     else
       puts "Invalid response!"
     end
